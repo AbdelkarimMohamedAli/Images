@@ -62,7 +62,7 @@ class ImageController extends Controller
     {
         $skip = (int)$id*5;
         $data = Image::where('status','pending')->take(1)->skip($skip)->orderby('_id','desc')->first();
-
+if(isset($data)){
         $height = ImageF::make(Storage::get($data['name']))->height();
         $width = ImageF::make(Storage::get($data['name']))->width();
         $height_ = intval($height/5);
@@ -76,9 +76,6 @@ class ImageController extends Controller
         $contents = file_get_contents($url);
         preg_match_all('!\d+!', $contents, $contents);
     if(isset($contents[0][0])){
-
-
-
         if (strlen($contents[0][0]) == 14) {
 
             $duplication = Image::where('national_id',(int)$contents[0][0])->first();
@@ -111,7 +108,8 @@ class ImageController extends Controller
         $data->save();
     }
     }
-
+    echo '<meta http-equiv="refresh" content="1">';
+}
 
 
     public function national_id_format($id)
@@ -144,20 +142,22 @@ class ImageController extends Controller
 
     // note: should get gov name
     // governorates, gender, day, month,year
-    public function national_id_data(Request $data)
+
+    public function garphs()
     {
-        $data=$data->all();
-        // make gov graph
-        $this->all_count();
-        $this->age_graph($data);
-        $this->gov_graph($data);
-        $this->gender_graph($data);
-        $this->gov_gender($data);
-        $this->gov_age($data);
         $all=Graphs::all();
         return $this->parse_data($all);
-        return $all;
-
+    }
+    public function national_id_data($data)
+    {
+        // make gov graph
+        $this->all_count();
+        $this->age_graph(clone $data);
+        $this->gov_graph(clone $data);
+        $this->gender_graph(clone $data);
+        $this->gov_gender(clone $data);
+        $this->gov_age(clone $data);
+    
        
     }
 
@@ -199,7 +199,7 @@ class ImageController extends Controller
     }
     private function get_age_obj($data,$gov_obj)
     {
-        $birthday = Carbon::createFromDate((int)$data['year'],(int)$data['month'], (int)$data['day']);
+        $birthday = Carbon::createFromDate((int)$data['years'],(int)$data['month'], (int)$data['day']);
         $age = $birthday->age;
         if( $age <= 35)
             {

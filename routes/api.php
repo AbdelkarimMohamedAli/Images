@@ -18,4 +18,4 @@ use Illuminate\Http\Request;
 // });
 Route::post('/save', 'SystemController@savedata');
 Route::post('/savepersonal', 'SystemController@personal');
-Route::post('/graph', 'ImageController@national_id_data');
+Route::get('/graph', 'ImageController@garphs');
